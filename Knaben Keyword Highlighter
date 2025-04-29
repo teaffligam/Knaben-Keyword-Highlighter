@@ -1,0 +1,111 @@
+// ==UserScript==
+// @name         Knaben Keyword Highlighter
+// @namespace    http://tampermonkey.net/
+// @version      1.7
+// @description  Highlight links with specific keywords in their title on knaben.org
+// @author       ChatGPT
+// @match        https://knaben.org/*
+// @grant        GM_addStyle
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Configure the keywords and their associated colors
+    const goodKeywords = {
+        'QXR': 'green',           // Renowned for balancing file size and quality.
+        'Framestore': 'green',    // Known for near-source quality remux releases.
+        'Cinephiles': 'green',    // Famous for top-tier 4K remuxes, surpassing retail quality.
+        'MooN': 'green',          // Known for exceptional 4K remuxes and great quality.
+        'REPACK': 'green',        // Known for high-quality repacks of previous releases.
+        'PSA': 'green',           // Reliable releases, often 4K or Blu-ray remuxes.
+        'D-Z0N3': 'green',        // Known for high-quality rips and careful encoding.
+        'H264': 'green',          // Renowned for balancing file size and quality.
+        'YCG': 'green' ,            // High-quality rips, especially in 1080p and 4K.
+          'Aisha': 'green',         // High-quality remuxes and rips
+    'AOC': 'green',           // Renowned for high-quality Blu-ray remuxes
+          'Ulysse': 'green',       // High-quality remuxes and Blu-ray rips
+    'KNiVES': 'green',       // Top-tier rips with great quality
+    'COLLECTiVE': 'green',   // High-quality Blu-ray rips and remuxes
+    };
+    const moderateKeywords = {
+        'HONE': 'orange',         // Praised for excellent WEB-DL encodes.
+        'FLUX': 'orange',         // Known for high-quality WEB-DL releases.
+        'WiLDCAT': 'orange',      // Known for great quality at larger file sizes.
+        'BLURANiUM': 'orange',    // Good Blu-ray and remux releases.
+        'PmP': 'orange',          // High-quality remuxes from Blu-ray or similar sources.
+        'EPSiLON': 'orange',      // Known for remux and hybrid releases.
+        'TRiToN': 'orange',       // High-quality remux and 4K releases.
+        'playBD': 'orange',       // High-quality Blu-ray remuxes, sometimes 4K.
+        'NTb': 'orange',          // Known for solid quality WEB-DL releases.
+        'SMURF': 'orange',        // Quality WEB-DL releases, consistent quality.
+        'TEPES': 'orange'         // Solid WEB-DL releases, popular for streaming.
+    };
+    const avoidKeywords = {
+        'YIFY': 'red',            // Over-compressed, low-quality encodes.
+        'YTS': 'red',             // Similar to YIFY, known for low-bitrate encodes.
+        'RARBG': 'red',           // Known for over-compressed releases with quality loss.
+        'EVO': 'red',             // Known for stealing other releases and fast uploads at the expense of quality.
+        'FaiLED': 'red',          // Poor compression and audio syncing issues.
+        'GalaxyRG': 'red',        // Known for poor compression and audio syncing issues.
+        'GalaxyTV': 'red',        // Frequently poor compression and audio issues.
+        'BONE': 'red',            // Mixed opinions; sometimes heavily compressed with inconsistent quality.
+        'ACAB': 'red',            // Low-quality, over-compressed encodes.
+        'P2P': 'red',             // Low-quality releases often sourced from torrents.
+        'RARBG (x265)': 'red',    // Over-compressed x265 releases, not recommended for quality viewing.
+        'AV1': 'red',             // Known for lower quality, especially with smaller file sizes.
+        'K!NGDOM': 'red'          // Bad quality releases, often heavily compressed.
+    };
+
+    // Add styles for highlighting
+    GM_addStyle(`
+        .highlight-green {
+            background-color: green !important;
+            color: white !important;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+        .highlight-orange {
+            background-color: orange !important;
+            color: black !important;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+        .highlight-red {
+            background-color: red !important;
+            color: white !important;
+            border-radius: 3px;
+            padding: 1px 3px;
+        }
+    `);
+
+    // Get all the links with titles
+    const links = document.querySelectorAll('a[title]');
+    for (const link of links) {
+        const title = link.title.toLowerCase();
+
+        // Check for good keywords (Green)
+        for (const [keyword, color] of Object.entries(goodKeywords)) {
+            if (title.includes(keyword.toLowerCase())) {
+                link.classList.add(`highlight-${color}`);
+                break;
+            }
+        }
+
+        // Check for moderate keywords (Orange)
+        for (const [keyword, color] of Object.entries(moderateKeywords)) {
+            if (title.includes(keyword.toLowerCase())) {
+                link.classList.add(`highlight-${color}`);
+                break;
+            }
+        }
+
+        // Check for avoid keywords (Red)
+        for (const [keyword, color] of Object.entries(avoidKeywords)) {
+            if (title.includes(keyword.toLowerCase())) {
+                link.classList.add(`highlight-${color}`);
+                break;
+            }
+        }
+    }
+})();
